@@ -1,0 +1,1 @@
+# SO_UFS_2026_2_Leal_Lucas_Araujo_Paulo
