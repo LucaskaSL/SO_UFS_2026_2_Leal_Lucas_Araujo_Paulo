@@ -1,0 +1,20 @@
+[2026-10-12 16:56:29] [Produtor 1] Adicionou: 'O que é um sistema operacional?' à fila.
+[2026-10-12 16:56:29] [Trabalhador 1] Iniciou processamento da 'O que é um sistema operacional?'
+[2026-10-12 16:56:29] [Trabalhador 1] Erro de Cache (Miss). Buscando contexto...
+[2026-10-12 16:56:29] [Trabalhador 2] Iniciou processamento da 'Consulta 0 gerada pelo Produtor 2'
+[2026-10-12 16:56:29] [Produtor 2] Adicionou: 'Consulta 0 gerada pelo Produtor 2' à fila.
+[2026-10-12 16:56:29] [Trabalhador 2] Erro de Cache (Miss). Buscando contexto...
+[2026-10-12 16:56:30] [Produtor 1] Adicionou: 'O que é um sistema operacional?' à fila.
+[2026-10-12 16:56:30] [Trabalhador 3] Iniciou processamento da 'O que é um sistema operacional?'
+[2026-10-12 16:56:30] [Trabalhador 3] Erro de Cache (Miss). Buscando contexto...
+[2026-10-12 16:56:30] [Produtor 2] Adicionou: 'Consulta 1 gerada pelo Produtor 2' à fila.
+[2026-10-12 16:56:30] [Trabalhador 4] Iniciou processamento da 'Consulta 1 gerada pelo Produtor 2'
+[2026-10-12 16:56:30] [Trabalhador 4] Erro de Cache (Miss). Buscando contexto...
+[2026-10-12 16:56:30] [Produtor 1] Adicionou: 'O que é um sistema operacional?' à fila.
+[2026-10-12 16:56:30] [Produtor 2] Adicionou: 'Consulta 2 gerada pelo Produtor 2' à fila.
+[2026-10-12 16:56:49] [Trabalhador 1] Resposta gerada em 19.00s e salva no cache.
+[2026-10-12 16:56:49] [Trabalhador 1] Iniciou processamento da 'O que é um sistema operacional?'
+[2026-10-12 16:56:49] [Trabalhador 1] Acerto de Cache (Hit) para 'O que é um sistema operacional?'
+[2026-10-12 16:56:49] [Trabalhador 1] Iniciou processamento da 'Consulta 2 gerada pelo Produtor 2'
+[2026-10-12 16:56:49] [Trabalhador 1] Erro de Cache (Miss). Buscando contexto...
+[2026-10-12 16:57:00] [Trabalhador 2] Resposta gerada em 10.50s e salva no cache.
