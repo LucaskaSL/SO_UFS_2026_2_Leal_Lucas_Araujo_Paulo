@@ -100,6 +100,8 @@ def trabalhador_consumidor(id_thread):
 # --- Execução Principal ---
 if __name__ == "__main__":
     open(ARQUIVO_LOG, "w").close() # Limpa log antigo
+
+    registrar_log("Inicio do log.")
     
     preparar_banco(NOME_CORPUS)
     
