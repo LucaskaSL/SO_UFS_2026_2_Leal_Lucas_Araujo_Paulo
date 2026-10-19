@@ -60,3 +60,27 @@ python3 server.py
 2. O arquivo `execucao.log` documentará o início das *threads*, o processamento das perguntas, o uso do cache e o encerramento seguro dos consumidores.
 3. As respostas do modelo Mistral-7B-Instruct-v0.3 geradas via CPU (ou resgatadas do cache) aparecerão no *log* e no terminal.
 
+## Contexto 2: C2 - Arquivo Mapeado (mmap) e Pressão de Memória
+
+O **Contexto 2** modifica a forma como o sistema operacional lida com a leitura do arquivo de *corpus*. Em vez de carregar o texto inteiro para a memória da aplicação de uma só vez, ele utiliza a biblioteca `mmap` para criar um mapeamento direto do arquivo na memória virtual. Esta configuração também utiliza um arquivo de entrada maior (`corpus_exagerado.txt`) para observar o comportamento do sistema sob carga.
+
+### Como funciona
+*   **Mapeamento em Memória (mmap):** O arquivo é aberto em modo binário (`rb`) e fatiado diretamente da memória virtual em blocos de 1.000 bytes. O sistema operacional (Linux) gerencia o carregamento das páginas do disco para a RAM sob demanda, gerando faltas de página (*page faults*) apenas quando um bloco específico é acessado.
+*   **Tratamento de Arquivos Grandes:** Essa abordagem previne o esgotamento imediato da RAM principal e evita a cópia redundante de dados entre o *kernel* e o espaço do usuário, sendo ideal para leitura de arquivos massivos ou *checkpoints* de modelos de IA.
+*   **Concorrência e Cache Mantidos:** A estrutura de múltiplos consumidores, fila de tarefas limitadas e proteção por *mutexes* permanece idêntica ao Contexto 1, garantindo que a única variável independente testada seja a mecânica de Entrada/Saída e o tamanho do arquivo.
+
+### Como executar
+
+Antes de executar, você precisará de um *corpus* de texto substancialmente maior. 
+1. Execute o *script* no terminal
+```bash
+python3 size_increase.py
+```
+
+vai criar arquivo grande chamado `corpus_exagerado.txt` no diretório.
+
+2. Execute o *script* no terminal:
+
+```bash
+python3 serverC2.py
+``` 
