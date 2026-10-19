@@ -137,3 +137,35 @@ Os dados de log serão gravados no arquivo execucao_c4.log.
 Para as primeiras três perguntas, o terminal exibirá "FALTA NO CACHE (Miss)", e o tempo de conclusão será de vários segundos, pois a requisição precisou transitar pelo modelo de IA.
 
 Para as últimas três perguntas, o terminal registrará "ACERTO NO CACHE (Hit)". O tempo de conclusão exibido saltará de vários segundos para praticamente zero (0.00s), demonstrando de forma contundente o tempo economizado e a redução da latência da aplicação.
+
+## Contexto 5: C5 - Pressão de Memória e Degradação
+
+O **Contexto 5** explora os limites arquitetônicos do sistema operacional ao aplicar uma carga extrema, caracterizando o cenário experimental de pressão de memória. O objetivo é aumentar drasticamente o tamanho do *corpus* e utilizar a mecânica de leitura convencional para observar eventos de degradação, esgotamento da RAM e acionamento da área de *swap*.
+
+### Como funciona
+*   **Geração de Carga Massiva:** Este contexto conta com um *script* auxiliar responsável por multiplicar o texto do `corpus_padrao.txt` repetidas vezes até compor um arquivo de entrada de 2.5 GB (`corpus_exagerado.txt`).
+*   **Sobrecarga de RAM (Gargalo Intencional):** Ao contrário do Contexto 2, que administrou arquivos grandes fatiando-os sob demanda com `mmap`, o Contexto 5 tenta carregar os 2.5 GB integralmente para a memória principal usando `f.read()`.
+*   **Monitoramento de Estresse:** O interpretador Python possui uma alta sobrecarga (*overhead*) para armazenar blocos de *strings* e listas (fragmentação). Isso fará a métrica `MemAvailable` despencar, forçando o *kernel* do Linux a recorrer à paginação para disco (*swap*) para evitar a interrupção abrupta do processo (*Out of Memory*)[cite: 2, 3].
+
+### Como executar
+
+Antes de executar, você precisará de um *corpus* de texto substancialmente maior. 
+1. Execute o *script* no terminal
+```bash
+python3 size_increase.py
+```
+
+vai criar arquivo grande chamado `corpus_exagerado.txt` no diretório.
+
+2. Execute o *script* no terminal:
+
+```bash
+python3 serverC5.py
+``` 
+**Resultados esperados:**
+
+Mantenha um segundo terminal aberto monitorando os recursos (utilizando `free -h`, `htop` ou `vmstat`). Durante a função preparar_banco(), você observará um pico agressivo no consumo de RAM.
+
+Com 15 GiB de RAM e apenas 2 GiB de swap na máquina testada, o sistema limitará os recursos ferozmente. Você poderá registrar o acionamento do swap ou até mesmo uma breve lentidão em outros aplicativos do SO.
+
+A latência global do serviço (visível no execucao.log) saltará substancialmente quando comparada à linha de base do Contexto 1, provando como a falta de otimização de E/S degrada pipelines de IA generativa e Recuperação Aumentada por Geração (RAG).
