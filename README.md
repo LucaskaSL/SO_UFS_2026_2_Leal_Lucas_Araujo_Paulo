@@ -113,3 +113,27 @@ python3 serverC3.py
 O terminal e o arquivo ``execucao.log`` exibirão as ações intercaladas: você verá produtores diferentes enviando dados e consumidores os processando em paralelo, evidenciando o uso de múltiplas CPUs.
 
 A aplicação será encerrada de forma limpa, confirmada pela mensagem "Recebeu sinal de encerramento" impressa por cada thread consumidora. Isso comprova a eficácia da sincronização no combate a falhas como inanição (starvation) ou processos zumbis aguardando eternamente por recursos.
+
+## Contexto 4: C4 - Cache Compartilhado e Exclusão Mútua
+
+O **Contexto 4** introduz uma estrutura de *cache* em memória acessível por todos os trabalhadores concorrentes. O objetivo deste cenário experimental é avaliar a eficácia do *cache* ao lidar com consultas repetidas e garantir que o compartilhamento dessa estrutura de dados não resulte em condições de corrida (*race conditions*).
+
+### Como funciona
+*   **Consultas Repetidas:** A fila de requisições é alimentada intencionalmente com consultas distintas seguidas de suas cópias exatas. Isso serve para forçar o sistema a registrar tanto "faltas" (*misses*) na primeira leitura quanto "acertos" (*hits*) nas leituras subsequentes.
+*   **Economia de Processamento:** Quando ocorre um *hit*, a *thread* consumidora resgata a resposta diretamente da RAM, desviando completamente da busca no banco de dados SQLite e, mais importante, da custosa inferência de *tokens* pelo modelo local Ollama.
+*   **Proteção de Área Crítica:** A estrutura do dicionário `cache_compartilhado` é uma área crítica. Para evitar que duas *threads* gravem ou leiam dados corrompidos ao mesmo tempo (o que causaria falhas no Python), o bloco de código que manipula o *cache* é protegido rigorosamente pelo `mutex_cache` (*Lock*).
+
+### Como executar
+
+Execute o *script* correspondente ao Contexto 4:
+
+```bash
+python3 serverC4.py
+```
+**Resultados esperados:**
+
+Os dados de log serão gravados no arquivo execucao_c4.log.
+
+Para as primeiras três perguntas, o terminal exibirá "FALTA NO CACHE (Miss)", e o tempo de conclusão será de vários segundos, pois a requisição precisou transitar pelo modelo de IA.
+
+Para as últimas três perguntas, o terminal registrará "ACERTO NO CACHE (Hit)". O tempo de conclusão exibido saltará de vários segundos para praticamente zero (0.00s), demonstrando de forma contundente o tempo economizado e a redução da latência da aplicação.
