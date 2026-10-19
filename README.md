@@ -1,5 +1,3 @@
-# SO_UFS_2026_2_Leal_Lucas_Araujo_Paulo
-
 # GenResearch-Servidor
 
 Este repositório contém a implementação do GenResearch-Servidor, um *pipeline* simplificado de Recuperação Aumentada por Geração (RAG) desenvolvido para observação e análise de recursos do sistema operacional, como memória, concorrência e armazenamento.
@@ -84,3 +82,34 @@ vai criar arquivo grande chamado `corpus_exagerado.txt` no diretório.
 ```bash
 python3 serverC2.py
 ``` 
+
+**Resultados esperados:**
+
+Os dados de log serão agora redirecionados para execucao_exagerado.log.
+
+Durante a primeira execução, ferramentas como `vmstat` ou `iostat -xz` em outro terminal devem registrar picos de faltas de página enquanto o SO carrega os blocos mapeados.
+
+Em uma segunda execução imediata, o tempo de ingestão deve ser notavelmente menor, comprovando que o cache de páginas do Linux manteve o arquivo retido na RAM.
+
+## Contexto 3: C3 - Concorrência e Fila (Produtores e Consumidores)
+
+O **Contexto 3** implementa o cenário experimental focado na arquitetura de concorrência da aplicação, utilizando o modelo clássico de produtores e consumidores. Esta etapa avalia a capacidade do sistema operacional em coordenar o acesso a filas e recursos compartilhados, garantindo a exclusão mútua e prevenindo bloqueios indesejados.
+
+### Como funciona
+*   **Produtores e Consumidores:** O *pipeline* é dividido em papéis claros. Duas *threads* independentes assumem o papel de produtores, simulando a chegada de requisições em tempos aleatórios e inserindo consultas na fila. Simultaneamente, duas *threads* atuam como consumidoras (trabalhadores concorrentes), retirando as tarefas da fila para executar a recuperação no banco SQLite e a inferência no Ollama.
+*   **Controle de Fila Limitada:** A estrutura `queue.Queue(maxsize=10)` atua como um *buffer* com capacidade estrita. O próprio gerenciamento da fila lida com estados de contenção equivalentes a variáveis de condição (*empty* e *full*): se a fila encher, os produtores são suspensos temporariamente; se esvaziar, os consumidores aguardam novas requisições.
+*   **Encerramento Gracioso (Poison Pill):** Diferente da interrupção abrupta por *timeout*, este contexto introduz o uso de sinais de parada (conhecido como *Poison Pill* ou *Sentinel Value*, usando o valor `None`). Isso garante que os consumidores sejam encerrados de forma segura e sincronizada apenas quando todos os produtores terminarem de submeter o lote de perguntas.
+*   **Exclusão Mútua Contínua:** Os *locks* (`mutex_cache` e `mutex_log`) continuam atuando para evitar condições de corrida na escrita do *cache* de respostas e na formatação das saídas de *log*.
+
+### Como executar
+
+Execute o *script* correspondente ao Contexto 3:
+
+```bash
+python3 serverC3.py
+```
+**Resultados esperados:**
+
+O terminal e o arquivo ``execucao.log`` exibirão as ações intercaladas: você verá produtores diferentes enviando dados e consumidores os processando em paralelo, evidenciando o uso de múltiplas CPUs.
+
+A aplicação será encerrada de forma limpa, confirmada pela mensagem "Recebeu sinal de encerramento" impressa por cada thread consumidora. Isso comprova a eficácia da sincronização no combate a falhas como inanição (starvation) ou processos zumbis aguardando eternamente por recursos.
