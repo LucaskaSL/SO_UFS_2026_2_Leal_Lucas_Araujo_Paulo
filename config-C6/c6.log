@@ -1,0 +1,25 @@
+[20:53:22] --- INICIANDO TESTE C6: FALHA CONTROLADA POR FILA SATURADA ---
+[20:53:22] [Produtor] Tentando inserir 'Pergunta número 1'...
+[20:53:22] [Produtor] SUCESSO: 'Pergunta número 1' aceita pelo servidor!
+[20:53:22] [Trabalhador 1] Retirou da fila e começou: 'Pergunta número 1'
+[20:53:22] [Produtor] Tentando inserir 'Pergunta número 2'...
+[20:53:22] [Produtor] SUCESSO: 'Pergunta número 2' aceita pelo servidor!
+[20:53:22] [Trabalhador 2] Retirou da fila e começou: 'Pergunta número 2'
+[20:53:22] [Produtor] Tentando inserir 'Pergunta número 3'...
+[20:53:22] [Produtor] SUCESSO: 'Pergunta número 3' aceita pelo servidor!
+[20:53:22] [Produtor] Tentando inserir 'Pergunta número 4'...
+[20:53:22] [Produtor] SUCESSO: 'Pergunta número 4' aceita pelo servidor!
+[20:53:22] [Produtor] Tentando inserir 'Pergunta número 5'...
+[20:53:23] FALHA CONTROLADA C6: Fila saturada! Rejeitando a 'Pergunta número 5' por excesso de carga.
+[20:53:23] [Produtor] Tentando inserir 'Pergunta número 6'...
+[20:53:24] FALHA CONTROLADA C6: Fila saturada! Rejeitando a 'Pergunta número 6' por excesso de carga.
+[20:53:24] [Produtor] Envio de requisições finalizado. Aguardando processamento do que foi aceito...
+[20:53:25] [Trabalhador 1] Terminou: 'Pergunta número 1'
+[20:53:25] [Trabalhador 2] Terminou: 'Pergunta número 2'
+[20:53:25] [Trabalhador 1] Retirou da fila e começou: 'Pergunta número 3'
+[20:53:25] [Trabalhador 2] Retirou da fila e começou: 'Pergunta número 4'
+[20:53:28] [Trabalhador 1] Terminou: 'Pergunta número 3'
+[20:53:28] [Trabalhador 2] Terminou: 'Pergunta número 4'
+[20:53:33] [Trabalhador 1] Fila vazia há muito tempo. Encerrando.
+[20:53:33] [Trabalhador 2] Fila vazia há muito tempo. Encerrando.
+[20:53:33] --- TESTE C6 FINALIZADO ---
