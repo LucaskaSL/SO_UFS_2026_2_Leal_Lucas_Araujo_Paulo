@@ -145,7 +145,7 @@ O **Contexto 5** explora os limites arquitetônicos do sistema operacional ao ap
 ### Como funciona
 *   **Geração de Carga Massiva:** Este contexto conta com um *script* auxiliar responsável por multiplicar o texto do `corpus_padrao.txt` repetidas vezes até compor um arquivo de entrada de 2.5 GB (`corpus_exagerado.txt`).
 *   **Sobrecarga de RAM (Gargalo Intencional):** Ao contrário do Contexto 2, que administrou arquivos grandes fatiando-os sob demanda com `mmap`, o Contexto 5 tenta carregar os 2.5 GB integralmente para a memória principal usando `f.read()`.
-*   **Monitoramento de Estresse:** O interpretador Python possui uma alta sobrecarga (*overhead*) para armazenar blocos de *strings* e listas (fragmentação). Isso fará a métrica `MemAvailable` despencar, forçando o *kernel* do Linux a recorrer à paginação para disco (*swap*) para evitar a interrupção abrupta do processo (*Out of Memory*)[cite: 2, 3].
+*   **Monitoramento de Estresse:** O interpretador Python possui uma alta sobrecarga (*overhead*) para armazenar blocos de *strings* e listas (fragmentação). Isso fará a métrica `MemAvailable` despencar, forçando o *kernel* do Linux a recorrer à paginação para disco (*swap*) para evitar a interrupção abrupta do processo (*Out of Memory*).
 
 ### Como executar
 
@@ -169,3 +169,27 @@ Mantenha um segundo terminal aberto monitorando os recursos (utilizando `free -h
 Com 15 GiB de RAM e apenas 2 GiB de swap na máquina testada, o sistema limitará os recursos ferozmente. Você poderá registrar o acionamento do swap ou até mesmo uma breve lentidão em outros aplicativos do SO.
 
 A latência global do serviço (visível no execucao.log) saltará substancialmente quando comparada à linha de base do Contexto 1, provando como a falta de otimização de E/S degrada pipelines de IA generativa e Recuperação Aumentada por Geração (RAG).
+
+## Contexto 6: C6 - Falha Controlada (Fila Saturada)
+
+O **Contexto 6** avalia a robustez do sistema diante de um cenário de estresse e falha controlada, especificamente a saturação da fila de requisições. O objetivo é provar que a aplicação consegue gerenciar picos de tráfego com segurança, lidando ativamente com o erro sem interromper a execução do servidor ou corromper o estado dos trabalhadores concorrentes.
+
+### Como funciona
+*   **Gargalo Intencional:** A capacidade máxima da fila compartilhada foi severamente restringida a apenas 2 requisições simultâneas (`maxsize=2`). Adicionalmente, as *threads* consumidoras foram configuradas para processar as tarefas de forma lenta (`time.sleep(3)`).
+*   **Saturação por Sobrecarga:** A *thread* produtora tenta "soterrar" o sistema inserindo 6 requisições de forma praticamente instantânea.
+*   **Tratamento de Exceção e Rejeição Graciosa:** Em vez de o produtor ficar bloqueado indefinidamente aguardando espaço na fila, a inserção opera com um `timeout` de 1 segundo. Quando a fila se mantém cheia além desse limite, o sistema levanta a exceção `queue.Full`. A aplicação captura essa exceção e rejeita a requisição graciosamente, registrando o controle de contenção no *log* e mantendo os serviços funcionais.
+
+### Como executar
+
+Execute o *script* correspondente ao Contexto 6:
+
+```bash
+python3 serverC6.py
+```
+**Resultados esperados:**
+
+O arquivo c6.log e o terminal mostrarão o produtor inserindo com sucesso as duas primeiras perguntas.
+
+Imediatamente após, o terminal será inundado com a mensagem: "FALHA CONTROLADA C6: Fila saturada! Rejeitando a 'Pergunta número X' por excesso de carga."
+
+Os trabalhadores concluirão o processamento seguro das requisições que entraram primeiro e o programa será encerrado de forma limpa, atestando a resiliência arquitetônica da aplicação
