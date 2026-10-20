@@ -1,6 +1,8 @@
 # GenResearch-Servidor
 
-Este repositório contém a implementação do GenResearch-Servidor, um *pipeline* simplificado de Recuperação Aumentada por Geração (RAG) desenvolvido para observação e análise de recursos do sistema operacional, como memória, concorrência e armazenamento.
+Este repositório contém a implementação do GenResearch-Servidor, um *pipeline* simplificado de Recuperação Aumentada por Geração (RAG) desenvolvido para observação e análise de recursos do sistema operacional, como memória, concorrência e armazenamento. Projeto da disciplina de Sistemas Operacionais (UFS 2026.2).
+
+Equipe: Lucas Santana, Miguel Pereira, Paulo Medeiros.
 
 ## Ambiente de Execução e Especificações
 
@@ -19,18 +21,39 @@ O ambiente base configurado para a validação e execução dos experimentos ate
 
 Antes de executar os cenários, certifique-se de que o ambiente possui o Python e o Ollama configurados corretamente.
 
-1. **Inicie o servidor local do Ollama:**
-   O *script* espera que a API do Ollama esteja rodando localmente na porta padrão (`11434`).
-   ```bash
-   ollama serve
-   ```
+### Passo 1: Instalar o motor de inferência (Ollama)
+Execute o script oficial de instalação do Ollama no seu terminal:
 
-2. **Baixe o modelo Mistral quantizado:**
-   ```bash
-   ollama run mistral
-   ```
+``` bash
+curl -fsSL [https://ollama.com/install.sh](https://ollama.com/install.sh) | sh
+```
 
-3. **Prepare o Corpus:**
+### Passo 2: Baixar o modelo Mistral-7B-Instruct-v0.3
+Com o Ollama instalado, realize o pull do modelo com quantização Q4 (aproximadamente 4.1GB):
+
+``` bash
+ollama pull mistral
+```
+
+### Passo 3: Baixar Python e biblioteca externa
+Para o Python:
+
+```bash
+sudo apt update && sudo apt install python3 python3-pip
+```
+
+ou alternativamente:
+
+```bash
+sudo dnf install python3 python3-pip
+```
+Para a biblioteca externa
+
+```bash
+pip install request
+```
+
+### Passo 4. Prepare o Corpus:
    Crie um arquivo chamado `corpus_padrao.txt` no mesmo diretório dos *scripts* com o conteúdo de texto que servirá de base de conhecimento para o servidor.
 
 ---
