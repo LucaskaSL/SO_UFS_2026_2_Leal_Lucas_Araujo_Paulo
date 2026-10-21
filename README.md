@@ -216,3 +216,7 @@ O arquivo c6.log e o terminal mostrarão o produtor inserindo com sucesso as dua
 Imediatamente após, o terminal será inundado com a mensagem: "FALHA CONTROLADA C6: Fila saturada! Rejeitando a 'Pergunta número X' por excesso de carga."
 
 Os trabalhadores concluirão o processamento seguro das requisições que entraram primeiro e o programa será encerrado de forma limpa, atestando a resiliência arquitetônica da aplicação
+
+## Vídeo da atividade
+
+https://youtu.be/dUWHz0i8Sgg
